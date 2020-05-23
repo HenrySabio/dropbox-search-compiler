@@ -1,6 +1,3 @@
 const fs = require('fs');
-fs.readFile('query.txt', 'utf8', function (err, data) {
-    if (err) throw err;
-    let queryArray = data.split('\n');
-    console.log(queryArray);
-});
+const queryArray = fs.readFileSync('query.txt').toString().split('\n');
+console.log(queryArray);
