@@ -1,0 +1,28 @@
+{
+  "name": "dropbox-search-compiler",
+  "version": "1.0.0",
+  "description": "Searches dropbox account for files based off a provided data set, creates a new folder under name of person making request, copies found files into sub directory based on the current date for quick and simple download or sharing.",
+  "main": "dropbox-search-compiler.js",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "dropbox": "^4.0.30",
+    "es6-promise": "^4.2.8",
+    "fetch": "^1.1.0",
+    "inquirer": "^7.1.0",
+    "isomorphic-fetch": "^2.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/HenrySabio/dropbox-search-compiler.git"
+  },
+  "author": "Henry Sabio",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/HenrySabio/dropbox-search-compiler/issues"
+  },
+  "homepage": "https://github.com/HenrySabio/dropbox-search-compiler#readme"
+}
