@@ -10,10 +10,14 @@ const date = new Date().toISOString().slice(0, 10);
 
 // Loads file system modile, converts text file data to an array
 const fs = require('fs');
-const productArray = fs.readFileSync('query.txt').toString().split('\n');
+let productArray = fs.readFileSync('query.txt').toString().split('\n');
+
+// Updates array with _A.jpg after each item to narrow down search
+for (var i = 0; i < productArray.length; i++) {
+    productArray[i] = productArray[i] + '_A.jpg';
+}
 
 let requestedBy, originalPath, fileName, username;
-
 
 // Create a "Prompt" with a series of questions.
 console.log('\n')
@@ -63,9 +67,8 @@ function dropboxSearch(searchQuery, requestedWho) {
     requestedBy = requestedWho;
 
     // Search begins at path defined, takes the first search result 
-    dbx.filesSearch({ path: '', mode: 'filename_and_content', max_results: 1, query: searchQuery })
-
-        // If product is found - copyFile function is called 
+    dbx.filesSearch({ path: '', mode: 'filename_and_content', max_results: 4, query: searchQuery })
+        // If result is found - copyFile function is called 
         .then(function (res) {
             originalPath = res.matches[0].metadata.path_lower;
             fileName = res.matches[0].metadata.name;
@@ -90,7 +93,7 @@ function copyFile(originalPath, requestedBy, fileName) {
         .catch(function (error) {
             console.log('------------------------Error------------------------')
             console.log('Failed to copy: ' + fileName);
-            console.log('\n'+error);
+            console.log(error);
             console.log('------------------------Error------------------------')
         });
 }
@@ -115,7 +118,7 @@ function beginSearch() {
         (function (i) {
             setTimeout(function () {
                 dropboxSearch(productArray[i], username);
-            }, 1000 * i);
+            }, 1500 * i);
         })(i);
     };
 }
