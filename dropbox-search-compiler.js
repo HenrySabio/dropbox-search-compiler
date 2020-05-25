@@ -1,4 +1,5 @@
-// Load dependencies
+/* ----- BEGIN: Application Dependency and Variable setup ----- */
+
 require('dotenv').config();
 require('isomorphic-fetch');
 const inquirer = require("inquirer");
@@ -10,7 +11,7 @@ const date = new Date().toISOString().slice(0, 10);
 
 // Loads file system modile, converts text file data to an array
 const fs = require('fs');
-let productArray = fs.readFileSync('query.txt').toString().split('\n');
+let productArray = fs.readFileSync('data/search.txt').toString().split('\n');
 
 // Updates array with _A.jpg after each item to narrow down search
 for (var i = 0; i < productArray.length; i++) {
@@ -19,15 +20,44 @@ for (var i = 0; i < productArray.length; i++) {
 
 let requestedBy, originalPath, fileName, username;
 
-// Header for missing_files log
-let missingLogHeader = `------------------------------------------------------------------------------------------\n
-Date of Search: ${date}\nRequested pictures for the files below could not be found.\n
-------------------------------------------------------------------------------------------\n\n`
+/* ----- End: Application Dependency and Variable setup ----- */
 
-// Creates log to record files that can't be found
-fs.writeFile('missing_files.txt', missingLogHeader, function (err) {
-    if (err) return console.log(err);
-  });
+/* ******************************************************************************************************* */
+
+/* ----- BEGIN: Result Data Logging Operations ----- */
+
+// Header for missing_files log
+let missingLogHeader = `--------------------------------------------------------------------------\n
+Date of Search: ${date}\nRequested pictures for the files below could not be found.\n
+--------------------------------------------------------------------------\n\n`
+
+// Header for found_files log
+let foundLogHeader = `--------------------------------------------------------------------------\n
+Date of Search: ${date}\nRequested pictures for the files below were succesfuly found and copied to a new folder.\n
+--------------------------------------------------------------------------\n\n`
+
+// Creates log to record files that can or can't be found
+function createLog(fileName, textHeader) {
+    fs.writeFile(`results/${fileName}.txt`, textHeader, function (err) {
+        if (err) return console.log(err);
+    });
+}
+
+createLog('missing_files', missingLogHeader);
+createLog('found_files', foundLogHeader);
+
+// Logs result to correspoinding log file
+function logResult(logName, searchQuery) {
+    fs.appendFile(`results/${logName}.txt`, `${searchQuery}\n`, function (err) {
+        if (err) return console.log(err);
+    })
+}
+
+/* ----- END: Result Data Logging Operations ----- */
+
+/* ******************************************************************************************************* */
+
+/* ----- BEGIN: CLI Prompt - Application Run ----- */
 
 // Create a "Prompt" with a series of questions.
 console.log('\n')
@@ -49,28 +79,31 @@ inquirer
                     message: `Your name is ${username}, is this correct?`,
                     name: "confirm",
                     default: true
-                },
-                {
-                    type: "confirm",
-                    message: "\n\nHave you updated the 'query.txt' file with items you will be searching for?\nBe sure to have every individual item on its own line.",
-                    name: "confirm",
-                    default: true
                 }
             ])
-            .then(function (inquirerResponse) {
-                // If the inquirerResponse confirms as correct, beginSearch function is called.
-                if (inquirerResponse.confirm) {
-                    console.log('\n-------------------------------------------------------')
-                    console.warn('Beginning Search for your rquested files...')
-                    console.log('-------------------------------------------------------\n')
-                    beginSearch();
-                }
-                // If not confirmed then program ends - try again when ready
-                else {
-                    console.log("\nThat's okay " + username + ", come again when you are more sure.\n");
-                }
-            });
+            .then(() => {
+                inquirer
+                    .prompt([
+                        {
+                            type: "confirm",
+                            message: `Have you done the following:
+    * Created a .txt file named 'search' inside of the data folder?
+    * Updated the search.txt file with the products you'd like to search for? 
+        - (Ensure each name is it's own line.)`,
+                            name: "confirm",
+                            default: true
+                        }
+                    ])
+                    // If the inquirerResponse confirms as correct, beginSearch function is called.
+                    .then(inquirerResponse => { inquirerResponse.confirm ? beginSearch() : console.log("\nThat's okay " + username + ", come again when you are more sure.\n") })
+            })
     })
+
+/* ----- END: CLI Prompt - Application Run ----- */
+
+/* ******************************************************************************************************* */
+
+/* ----- BEGIN: Dropbox API Operations - Handles operations during application run ----- */
 
 // Takes product array and name of person requesting to begin api calls for search
 function dropboxSearch(searchQuery, requestedWho) {
@@ -86,12 +119,8 @@ function dropboxSearch(searchQuery, requestedWho) {
         })
         // If product is not found - conosle logs the item that is missing
         .catch(function (error) {
-            console.error(`\nERROR --> Unable to find: ${searchQuery}\n`);
-
-            // Logs name of files that count be found to missing_files.txt
-            fs.appendFile('missing_files.txt', `${searchQuery}\n`, function(err) {
-                if (err) return console.log(err);
-            })
+            // Logs name of files that can't be found to missing_files.txt
+            logResult('missing_files', searchQuery);
         });
 }
 
@@ -100,6 +129,8 @@ function copyFile(originalPath, requestedBy, fileName) {
     dbx.filesCopy({ allow_shared_folder: true, autorename: true, from_path: originalPath, to_path: `/requested-files/${requestedBy}/${date}/${fileName}` })
         // Confirms file has been copied
         .then(function (res) {
+            // Logs name of files that can be found to found.txt
+            logResult('found_files', fileName);
             console.log('Successfully copied: ' + fileName);
         })
         // Console logs if file is unable to be copied
@@ -124,6 +155,12 @@ function shareFolder(requestedBy) {
 
 // Calls search function 
 function beginSearch() {
+    // Begins search for files
+    console.log('\n-------------------------------------------------------');
+    console.log('Beginning Search for your rquested files...');
+    console.log('Results will be record in the results folder as the search progresses.');
+    console.log('-------------------------------------------------------\n');
+
     // Loops through product array to search for each item and copy as they are found
     for (let i = 0; i < productArray.length; i++) {
         // setTimeout triggered as an Immdiately Invoked Function Expression (IIFE)
@@ -135,3 +172,5 @@ function beginSearch() {
         })(i);
     };
 }
+
+/* ----- END: Dropbox API Operations - Handles operations during application run ----- */
