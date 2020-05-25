@@ -1,6 +1,6 @@
 {
   "name": "dropbox-search-compiler",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Searches dropbox account for files based off a provided data set, creates a new folder under name of person making request, copies found files into sub directory based on the current date for quick and simple download or sharing.",
   "main": "dropbox-search-compiler.js",
   "dependencies": {

@@ -3,7 +3,7 @@ require('dotenv').config();
 require('isomorphic-fetch');
 const inquirer = require("inquirer");
 const Dropbox = require('dropbox').Dropbox;
-const dbx = new Dropbox({ accessToken: process.env.API_KEY, fetch });
+const dbx = new Dropbox({ accessToken: process.env.TEST_API_KEY, fetch });
 
 // Assigns current date to variable - formatted yyyy-mm-dd
 const date = new Date().toISOString().slice(0, 10);
@@ -18,6 +18,16 @@ for (var i = 0; i < productArray.length; i++) {
 }
 
 let requestedBy, originalPath, fileName, username;
+
+// Header for missing_files log
+let missingLogHeader = `------------------------------------------------------------------------------------------\n
+Date of Search: ${date}\nRequested pictures for the files below could not be found.\n
+------------------------------------------------------------------------------------------\n\n`
+
+// Creates log to record files that can't be found
+fs.writeFile('missing_files.txt', missingLogHeader, function (err) {
+    if (err) return console.log(err);
+  });
 
 // Create a "Prompt" with a series of questions.
 console.log('\n')
@@ -76,9 +86,12 @@ function dropboxSearch(searchQuery, requestedWho) {
         })
         // If product is not found - conosle logs the item that is missing
         .catch(function (error) {
-            console.log('\n------------------------Error------------------------')
-            console.error('Unable to find: ' + searchQuery);
-            console.log('------------------------Error------------------------\n')
+            console.error(`\nERROR --> Unable to find: ${searchQuery}\n`);
+
+            // Logs name of files that count be found to missing_files.txt
+            fs.appendFile('missing_files.txt', `${searchQuery}\n`, function(err) {
+                if (err) return console.log(err);
+            })
         });
 }
 
