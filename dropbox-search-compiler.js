@@ -7,7 +7,6 @@ const inquirer = require("inquirer");
 const Dropbox = require('dropbox').Dropbox;
 const dbx = new Dropbox({ accessToken: process.env.TEST_API_KEY, fetch });
 
-
 // Assigns current date to variable - formatted yyyy-mm-dd
 const date = new Date().toISOString().slice(0, 10);
 
@@ -176,7 +175,6 @@ function beginSearch() {
     bar1.start(productArray.length, 0, {
         speed: 'N/A'
     });
-
 
     // Loops through product array to search for each item and copy as they are found
     for (let i = 0; i < productArray.length; i++) {
