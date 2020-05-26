@@ -120,10 +120,12 @@ function dropboxSearch(searchQuery, requestedWho) {
             originalPath = res.matches[0].metadata.path_lower;
             fileName = res.matches[0].metadata.name;
             copyFile(originalPath, requestedBy, fileName);
+            // Updates count for total files found
             found++;
         })
         // If product is not found - conosle logs the item that is missing
         .catch(function (error) {
+            // Updates count for total files not found
             notFound++;
             // Logs name of files that can't be found to missing_files.txt
             logResult('missing_files', searchQuery);
