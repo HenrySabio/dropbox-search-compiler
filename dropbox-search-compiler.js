@@ -7,7 +7,6 @@ const inquirer = require("inquirer");
 const Dropbox = require('dropbox').Dropbox;
 const dbx = new Dropbox({ accessToken: process.env.TEST_API_KEY, fetch });
 
-
 // Assigns current date to variable - formatted yyyy-mm-dd
 const date = new Date().toISOString().slice(0, 10);
 
@@ -167,17 +166,16 @@ function beginSearch() {
     console.log('Beginning Search for your rquested files...');
     console.log('Results will be record in the results folder as the search progresses.');
     console.log('-------------------------------------------------------\n');
-
+    
     // Creates a new progress bar instance
     const bar1 = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
     let barValue = 1;
-
+    
     // Set bar length to amount of items we are searching for, start point to 0
     bar1.start(productArray.length, 0, {
         speed: 'N/A'
     });
-
-
+    
     // Loops through product array to search for each item and copy as they are found
     for (let i = 0; i < productArray.length; i++) {
         // setTimeout triggered as an Immdiately Invoked Function Expression (IIFE)
@@ -188,8 +186,9 @@ function beginSearch() {
                 if (i == (productArray.length - 1)) {
                     bar1.update(barValue++);
                     bar1.stop();
+                    console.log('\n-------------------------------------------------------\n');
                     console.log('\nMission Complete! --> Please check the log files in the results folder for final confirmation.\n');
-                    console.log(`Results:\n${found} files found\n${notFound} files not found`);
+                    console.log(`Final Results:\n${found} files found\n${notFound} files not found`);
                 } else if (i < productArray.length) {
                     bar1.update(barValue++);
                     dropboxSearch(productArray[i], username);
