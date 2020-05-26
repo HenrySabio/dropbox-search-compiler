@@ -241,7 +241,7 @@ function beginSearch() {
                     bar1.update(barValue++);
                     dropboxSearch(productArray[i], username);
                 }
-            }, 1500 * i);
+            }, 3000 * i);
         })(i);
     };
 }

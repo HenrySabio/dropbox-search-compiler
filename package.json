@@ -8,7 +8,6 @@
     "dotenv": "^8.2.0",
     "dropbox": "^4.0.30",
     "es6-promise": "^4.2.8",
-    "fetch": "^1.1.0",
     "inquirer": "^7.1.0",
     "isomorphic-fetch": "^2.2.1"
   },
