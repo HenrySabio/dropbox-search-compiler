@@ -84,8 +84,7 @@ console.log(`Y88b .d8888b        Y88b  d88P Y88..88P 888  888  888 888 d88P 888 
 console.log(` "Y8888P" Y88b       "Y8888P"   "Y88P"  888  888  888 88888P"  888 888  "Y8888  888                                                 `);
 console.log(`                                                      888                                                                           `);
 console.log(`                                                      888                                                                           `);
-console.log(`                                                      888                                                                           `);
-console.log('\n')
+console.log(`                                                      888                                                                           \n`);
 
 inquirer
     .prompt([
