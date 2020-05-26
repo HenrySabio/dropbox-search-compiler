@@ -22,6 +22,9 @@ Installation is simple.
 * Fork & Clone the repository to your computer
 * `cd` into application directory
 * Run `npm i` to download required node packages
+* Created a `.env` file withing root directory and assign your dropbox API key
+* Create a `search.txt` file inside the `data` folder and create list of files you'd like to search for.
+  * Note: List must be 1 item per line. 
 * Run `node dropbox-search-compiler` and follow prompts
 * That's it!
 
