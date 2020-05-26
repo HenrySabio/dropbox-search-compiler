@@ -4,6 +4,7 @@
   "description": "Searches dropbox account for files based off a provided data set, creates a new folder under name of person making request, copies found files into sub directory based on the current date for quick and simple download or sharing.",
   "main": "dropbox-search-compiler.js",
   "dependencies": {
+    "cli-progress": "^3.8.2",
     "dotenv": "^8.2.0",
     "dropbox": "^4.0.30",
     "es6-promise": "^4.2.8",

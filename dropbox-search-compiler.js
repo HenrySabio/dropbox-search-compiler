@@ -2,9 +2,11 @@
 
 require('dotenv').config();
 require('isomorphic-fetch');
+const cliProgress = require('cli-progress');
 const inquirer = require("inquirer");
 const Dropbox = require('dropbox').Dropbox;
 const dbx = new Dropbox({ accessToken: process.env.TEST_API_KEY, fetch });
+
 
 // Assigns current date to variable - formatted yyyy-mm-dd
 const date = new Date().toISOString().slice(0, 10);
@@ -18,7 +20,9 @@ for (var i = 0; i < productArray.length; i++) {
     productArray[i] = productArray[i] + '_A.jpg';
 }
 
-let requestedBy, originalPath, fileName, username;
+let requestedBy, originalPath, fileName, username,
+    found = 0,
+    notFound = 0;
 
 /* ----- End: Application Dependency and Variable setup ----- */
 
@@ -116,9 +120,11 @@ function dropboxSearch(searchQuery, requestedWho) {
             originalPath = res.matches[0].metadata.path_lower;
             fileName = res.matches[0].metadata.name;
             copyFile(originalPath, requestedBy, fileName);
+            found++;
         })
         // If product is not found - conosle logs the item that is missing
         .catch(function (error) {
+            notFound++;
             // Logs name of files that can't be found to missing_files.txt
             logResult('missing_files', searchQuery);
         });
@@ -131,7 +137,6 @@ function copyFile(originalPath, requestedBy, fileName) {
         .then(function (res) {
             // Logs name of files that can be found to found.txt
             logResult('found_files', fileName);
-            console.log('Successfully copied: ' + fileName);
         })
         // Console logs if file is unable to be copied
         .catch(function (error) {
@@ -161,13 +166,32 @@ function beginSearch() {
     console.log('Results will be record in the results folder as the search progresses.');
     console.log('-------------------------------------------------------\n');
 
+    // Creates a new progress bar instance
+    const bar1 = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+    let barValue = 1;
+
+    // Set bar length to amount of items we are searching for, start point to 0
+    bar1.start(productArray.length, 0, {
+        speed: 'N/A'
+    });
+
+
     // Loops through product array to search for each item and copy as they are found
     for (let i = 0; i < productArray.length; i++) {
         // setTimeout triggered as an Immdiately Invoked Function Expression (IIFE)
         // Must be done as IIFE because setTimeout is nonblocking and returns immidiately - no delay seen inside for loop if done normally
         (function (i) {
             setTimeout(function () {
-                dropboxSearch(productArray[i], username);
+                bar1.increment();
+                if (i == (productArray.length - 1)) {
+                    bar1.update(barValue++);
+                    bar1.stop();
+                    console.log('\nMission Complete! --> Please check the log files in the results folder for final confirmation.\n');
+                    console.log(`Results:\n${found} files found\n${notFound} files not found`);
+                } else if (i < productArray.length) {
+                    bar1.update(barValue++);
+                    dropboxSearch(productArray[i], username);
+                }
             }, 1500 * i);
         })(i);
     };
