@@ -84,21 +84,25 @@ inquirer
                     default: true
                 }
             ])
-            .then(() => {
-                inquirer
-                    .prompt([
-                        {
-                            type: "confirm",
-                            message: `Have you done the following:
-    * Created a .txt file named 'search' inside of the data folder?
-    * Updated the search.txt file with the products you'd like to search for? 
-        - (Ensure each name is it's own line.)`,
-                            name: "confirm",
-                            default: true
-                        }
-                    ])
-                    // If the inquirerResponse confirms as correct, beginSearch function is called.
-                    .then(inquirerResponse => { inquirerResponse.confirm ? beginSearch() : console.log("\nThat's okay " + username + ", come again when you are more sure.\n") })
+            .then( inquirerResponse => {
+                if (inquirerResponse.confirm) {
+                    inquirer
+                        .prompt([
+                            {
+                                type: "confirm",
+                                message: `Have you done the following:
+        * Created a .txt file named 'search' inside of the data folder?
+        * Updated the search.txt file with the products you'd like to search for? 
+            - (Ensure each name is it's own line.)`,
+                                name: "confirm",
+                                default: true
+                            }
+                        ])
+                        // If the inquirerResponse confirms as correct, beginSearch function is called.
+                        .then(inquirerResponse => { inquirerResponse.confirm ? beginSearch() : console.log("\nThat's okay " + username + ", come again when you are more sure.\n") })
+                } else {
+                    console.log("\nOops! Please restart the application to try again.\n");
+                }
             })
     })
 
