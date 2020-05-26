@@ -107,7 +107,7 @@ inquirer
                     default: true
                 }
             ])
-            .then( inquirerResponse => {
+            .then(inquirerResponse => {
                 if (inquirerResponse.confirm) {
                     inquirer
                         .prompt([
@@ -188,21 +188,43 @@ function shareFolder(requestedBy) {
 
 // Calls search function 
 function beginSearch() {
+
+    // Displays premature results if application is ended early via 'ctrl + c' or 'ctrl + z'
+    process.on('SIGINT', function () {
+        console.log("\n\n\nUh-oh! You have ended the process before completion.");
+        bar1.stop();
+
+        console.log('---------------------------------------------------------------------------------------------------------');
+        console.log('\nPlease check the log files in the results folder for confirmation of what was able to be completed.\n');
+        console.log(`Final Results:\n${found} files found\n${notFound} files not found`);
+        process.exit();
+    });
+
+    process.on('SIGTSTP', function () {
+        console.log("\n\n\nUh-oh! You have ended the process before completion.");
+        bar1.stop();
+
+        console.log('---------------------------------------------------------------------------------------------------------');
+        console.log('\nPlease check the log files in the results folder for confirmation of what was able to be completed.\n');
+        console.log(`Final Results:\n${found} files found\n${notFound} files not found`);
+        process.exit();
+    });
+
     // Begins search for files
     console.log('\n-------------------------------------------------------');
     console.log('Beginning Search for your rquested files...');
     console.log('Results will be recorded in the results folder as the search progresses.');
     console.log('-------------------------------------------------------\n');
-    
+
     // Creates a new progress bar instance
     const bar1 = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
     let barValue = 1;
-    
+
     // Set bar length to amount of items we are searching for, start point to 0
     bar1.start(productArray.length, 0, {
         speed: 'N/A'
     });
-    
+
     // Loops through product array to search for each item and copy as they are found
     for (let i = 0; i < productArray.length; i++) {
         // setTimeout triggered as an Immdiately Invoked Function Expression (IIFE)
