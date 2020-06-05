@@ -28,3 +28,4 @@ Installation is simple.
 * Run `node dropbox-search-compiler` and follow prompts
 * That's it!
 
+More updates to follow as needs require.
