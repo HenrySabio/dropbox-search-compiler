@@ -14,12 +14,7 @@ const date = new Date().toISOString().slice(0, 10);
 const fs = require('fs');
 let productArray = fs.readFileSync('data/search.txt').toString().split('\n');
 
-// Updates array with _A.jpg after each item to narrow down search
-for (var i = 0; i < productArray.length; i++) {
-    productArray[i] = productArray[i] + '_A.jpg';
-}
-
-let requestedBy, originalPath, fileName, username,
+let requestedBy, copyBatch, originalPath, fileName, username,
     found = 0,
     notFound = 0;
 
@@ -144,7 +139,14 @@ function dropboxSearch(searchQuery, requestedWho) {
         .then(function (res) {
             originalPath = res.matches[0].metadata.path_lower;
             fileName = res.matches[0].metadata.name;
-            copyFile(originalPath, requestedBy, fileName);
+            
+            // Takes first result and appends source & destinaiton paths to array.
+            copyBatch.push({ from_path: originalPath, to_path: `/requested-files/${requestedBy}/${date}/${fileName}` })
+            
+            // const result = await dbx.filesCopyBatchV2({ entries: filePaths, autorename: false });
+            // console.log(result);
+
+            // copyFile(originalPath, requestedBy, fileName);
             // Updates count for total files found
             found++;
         })
