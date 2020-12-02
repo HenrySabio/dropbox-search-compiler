@@ -225,13 +225,13 @@ function beginSearch() {
     });
 
     // Loops through product array to search for each item and copy as they are found
-    for (let i = 0; i < productArray.length; i++) {
+    for (let i = 0; i <= productArray.length; i++) {
         // setTimeout triggered as an Immdiately Invoked Function Expression (IIFE)
         // Must be done as IIFE because setTimeout is nonblocking and returns immidiately - no delay seen inside for loop if done normally
         (function (i) {
             setTimeout(function () {
                 bar1.increment();
-                if (i == (productArray.length - 1)) {
+                if (i == (productArray.length)) {
                     bar1.update(barValue++);
                     bar1.stop();
                     console.log('\n-------------------------------------------------------\n');
@@ -241,7 +241,7 @@ function beginSearch() {
                     bar1.update(barValue++);
                     dropboxSearch(productArray[i], username);
                 }
-            }, 3000 * i);
+            }, 1500 * i);
         })(i);
     };
 }
