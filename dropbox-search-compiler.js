@@ -12,13 +12,31 @@ const date = new Date().toISOString().slice(0, 10);
 
 // Loads file system modile, converts text file data to an array
 const fs = require('fs');
+let copyBatch = [];
 let productArray = fs.readFileSync('data/search.txt').toString().split('\n');
-// Updates array with _A.jpg after each item to narrow down search
-for (var i = 0; i < productArray.length; i++) {
-    productArray[i] = productArray[i] + '_A.jpg';
+
+// Creates A Angle array
+let topViewsArr = [...productArray];
+for (var i = 0; i < topViewsArr.length; i++) {
+    topViewsArr[i] = topViewsArr[i] + '_A.jpg';
 }
 
-let copyBatch = [];
+// Creates B Angle array
+let angleViewArr = [...productArray];
+for (var i = 0; i < angleViewArr.length; i++) {
+    angleViewArr[i] = angleViewArr[i] + '_B.jpg';
+}
+
+// Creates C Angle array
+let closeViewArr = [...productArray];
+for (var i = 0; i < closeViewArr.length; i++) {
+    closeViewArr[i] = closeViewArr[i] + '_C.jpg';
+}
+
+// Creates all Angles array
+let allAnglesArr = topViewsArr.concat(topViewsArr, angleViewArr, closeViewArr);
+console.log(allAnglesArr);
+
 
 let requestedBy, originalPath, fileName, username,
     found = 0,
