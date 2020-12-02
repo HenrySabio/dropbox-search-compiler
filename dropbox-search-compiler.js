@@ -64,28 +64,9 @@ function logResult(logName, searchQuery) {
 /* ----- BEGIN: CLI Prompt - Application Run ----- */
 
 // Create a "Prompt" with a series of questions.
-console.log('\n')
-console.log(`8888888b.                            888                               .d8888b.                                     888             `);
-console.log(`888  "Y88b                           888                              d88P  Y88b                                    888             `);
-console.log(`888    888                           888                              Y88b.                                         888             `);
-console.log(`888    888 888d888  .d88b.  88888b.  88888b.   .d88b.  888  888        "Y888b.    .d88b.   8888b.  888d888  .d8888b 88888b.         `);
-console.log(`888    888 888P"   d88""88b 888 "88b 888 "88b d88""88b 'Y8bd8P'           "Y88b. d8P  Y8b     "88b 888P"   d88P"    888 "88b        `);
-console.log(`888    888 888     888  888 888  888 888  888 888  888   X88K               "888 88888888 .d888888 888     888      888  888        `);
-console.log(`888  .d88P 888     Y88..88P 888 d88P 888 d88P Y88..88P .d8""8b.       Y88b  d88P Y8b.     888  888 888     Y88b.    888  888        `);
-console.log(`8888888P"  888      "Y88P"  88888P"  88888P"   "Y88P"  888  888        "Y8888P"   "Y8888  "Y888888 888      "Y8888P 888  888        `);
-console.log(`                            888                                                                                                     `);
-console.log(`                            888                                                                                                     `);
-console.log(` .d8888b.            .d8888b.88                                d8b 888                                                              `);
-console.log(`d88P  "88b          d88P  Y88b                                 Y8P 888                                                              `);
-console.log(`Y88b. d88P          888    888                                     888                                                              `);
-console.log(` "Y8888P"           888         .d88b.  88888b.d88b.  88888b.  888 888  .d88b.  888d888                                             `);
-console.log(`.d88P88K.d88P       888        d88""88b 888 "888 "88b 888 "88b 888 888 d8P  Y8b 888P"                                               `);
-console.log(`888"  Y888P"        888    888 888  888 888  888  888 888  888 888 888 88888888 888                                                 `);
-console.log(`Y88b .d8888b        Y88b  d88P Y88..88P 888  888  888 888 d88P 888 888 Y8b.     888                                                 `);
-console.log(` "Y8888P" Y88b       "Y8888P"   "Y88P"  888  888  888 88888P"  888 888  "Y8888  888                                                 `);
-console.log(`                                                      888                                                                           `);
-console.log(`                                                      888                                                                           `);
-console.log(`                                                      888                                                                           \n`);
+console.log('============================================================\n')
+console.log('     Welcome to the Dropbox Asset Search & File Compiler\n')
+console.log('============================================================\n')
 
 inquirer
     .prompt([
