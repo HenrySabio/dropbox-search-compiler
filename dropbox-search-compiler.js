@@ -143,22 +143,9 @@ function dropboxSearch(searchQuery, requestedWho) {
 // Takes query result data and creates a copy in folder named after user who requested files under the current data
 function copyFile() {
     dbx.filesCopyBatchV2({ entries: copyBatch, autorename: false })
-        .catch(function(err) {
+        .catch(function (err) {
             console.log(err);
         })
-    // dbx.filesCopy({ allow_shared_folder: true, autorename: true, from_path: originalPath, to_path: `/requested-files/${requestedBy}/${date}/${fileName}` })
-    //     // Confirms file has been copied
-    //     .then(function (res) {
-    //         // Logs name of files that can be found to found.txt
-    //         logResult('found_files', fileName);
-    //     })
-    //     // Console logs if file is unable to be copied
-    //     .catch(function (error) {
-    //         console.log('------------------------Error------------------------')
-    //         console.log('Failed to copy: ' + fileName);
-    //         console.log(error);
-    //         console.log('------------------------Error------------------------')
-    //     });
 }
 
 // Work in progress - DNU - Automatically creates share link to folder where data was saved.
