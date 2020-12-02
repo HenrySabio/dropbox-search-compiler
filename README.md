@@ -1,6 +1,9 @@
 # Dropbox Search & Compiler
+Hi! I have to search for a million files a day at work so I made an automated dropbox file search via CLI using the Dropbox Javascript SDK to make my life easier.
 
-Simple automated dropbox file search via CLI using the Dropbox API.
+This is slowly changing as I learn to improve and streamline it - feel free to build off it for your own use! I built it out for my specific use case - but the concept is simple enough for someone to pick it apart, clean it up, and make it their own.
+
+(This is my first real world application of the skills I've learned via self teaching and a bootcamp I attended - so I'm open to any advice or ideas should anyone take the time to provide it.)
 
 ![GIF of app running](img/app-gif.gif)
 
