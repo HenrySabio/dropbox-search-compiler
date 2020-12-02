@@ -5,7 +5,7 @@ require('isomorphic-fetch');
 const cliProgress = require('cli-progress');
 const inquirer = require("inquirer");
 const Dropbox = require('dropbox').Dropbox;
-const dbx = new Dropbox({ accessToken: process.env.TEST_API_KEY, fetch });
+const dbx = new Dropbox({ accessToken: process.env.API_KEY, fetch });
 
 // Assigns current date to variable - formatted yyyy-mm-dd
 const date = new Date().toISOString().slice(0, 10);
@@ -13,8 +13,14 @@ const date = new Date().toISOString().slice(0, 10);
 // Loads file system modile, converts text file data to an array
 const fs = require('fs');
 let productArray = fs.readFileSync('data/search.txt').toString().split('\n');
+// Updates array with _A.jpg after each item to narrow down search
+for (var i = 0; i < productArray.length; i++) {
+    productArray[i] = productArray[i] + '_A.jpg';
+}
 
-let requestedBy, copyBatch, originalPath, fileName, username,
+let copyBatch = [];
+
+let requestedBy, originalPath, fileName, username,
     found = 0,
     notFound = 0;
 
@@ -134,20 +140,14 @@ function dropboxSearch(searchQuery, requestedWho) {
     requestedBy = requestedWho;
 
     // Search begins at path defined, takes the first search result 
-    dbx.filesSearch({ path: '', mode: 'filename_and_content', max_results: 4, query: searchQuery })
+    dbx.filesSearch({ path: '', mode: 'filename', max_results: 4, query: searchQuery })
         // If result is found - copyFile function is called 
         .then(function (res) {
             originalPath = res.matches[0].metadata.path_lower;
             fileName = res.matches[0].metadata.name;
-            
+
             // Takes first result and appends source & destinaiton paths to array.
             copyBatch.push({ from_path: originalPath, to_path: `/requested-files/${requestedBy}/${date}/${fileName}` })
-            
-            // const result = await dbx.filesCopyBatchV2({ entries: filePaths, autorename: false });
-            // console.log(result);
-
-            // copyFile(originalPath, requestedBy, fileName);
-            // Updates count for total files found
             found++;
         })
         // If product is not found - conosle logs the item that is missing
@@ -160,20 +160,24 @@ function dropboxSearch(searchQuery, requestedWho) {
 }
 
 // Takes query result data and creates a copy in folder named after user who requested files under the current data
-function copyFile(originalPath, requestedBy, fileName) {
-    dbx.filesCopy({ allow_shared_folder: true, autorename: true, from_path: originalPath, to_path: `/requested-files/${requestedBy}/${date}/${fileName}` })
-        // Confirms file has been copied
-        .then(function (res) {
-            // Logs name of files that can be found to found.txt
-            logResult('found_files', fileName);
+function copyFile() {
+    dbx.filesCopyBatchV2({ entries: copyBatch, autorename: false })
+        .catch(function(err) {
+            console.log(err);
         })
-        // Console logs if file is unable to be copied
-        .catch(function (error) {
-            console.log('------------------------Error------------------------')
-            console.log('Failed to copy: ' + fileName);
-            console.log(error);
-            console.log('------------------------Error------------------------')
-        });
+    // dbx.filesCopy({ allow_shared_folder: true, autorename: true, from_path: originalPath, to_path: `/requested-files/${requestedBy}/${date}/${fileName}` })
+    //     // Confirms file has been copied
+    //     .then(function (res) {
+    //         // Logs name of files that can be found to found.txt
+    //         logResult('found_files', fileName);
+    //     })
+    //     // Console logs if file is unable to be copied
+    //     .catch(function (error) {
+    //         console.log('------------------------Error------------------------')
+    //         console.log('Failed to copy: ' + fileName);
+    //         console.log(error);
+    //         console.log('------------------------Error------------------------')
+    //     });
 }
 
 // Work in progress - DNU - Automatically creates share link to folder where data was saved.
@@ -239,11 +243,15 @@ function beginSearch() {
                     console.log('\n-------------------------------------------------------\n');
                     console.log('\nMission Complete! --> Please check the log files in the results folder for final confirmation.\n');
                     console.log(`Final Results:\n${found} files found\n${notFound} files not found`);
+
+                    copyFile();
+                    // copyFile(originalPath, requestedBy, fileName);
+                    // Updates count for total files found
                 } else if (i < productArray.length) {
                     bar1.update(barValue++);
                     dropboxSearch(productArray[i], username);
                 }
-            }, 1500 * i);
+            }, 500 * i);
         })(i);
     };
 }
