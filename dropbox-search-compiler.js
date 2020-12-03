@@ -15,26 +15,29 @@ const fs = require('fs');
 let copyBatch = [];
 let productArray = fs.readFileSync('data/search.txt').toString().split('\n');
 
-// Creates A Angle array
-let topViewsArr = [...productArray];
-for (var i = 0; i < topViewsArr.length; i++) {
-    topViewsArr[i] = topViewsArr[i] + '_A.jpg';
+// Initializes Base Arrays to build on
+let topViewsArr = [...productArray], angleViewArr = [...productArray], closeViewArr = [...productArray],
+    allAnglesArr = []
+
+// Will build arrays off existing base arrays for individual angle searchs
+function buildProductSearchArr(arrName, prefix) {
+    for (let i = 0; i < arrName.length; i++) {
+        arrName[i] = arrName[i] + prefix;
+    }
 }
 
-// Creates B Angle array
-let angleViewArr = [...productArray];
-for (var i = 0; i < angleViewArr.length; i++) {
-    angleViewArr[i] = angleViewArr[i] + '_B.jpg';
+// Builds all product angle arrays at once
+for (let i = 0; i <= 2; i++) {
+    let tempArr1 = [topViewsArr, angleViewArr, closeViewArr]
+    let tempArr2 = ['_A.jpg', '_B.jpg', '_C.jpg']
+    buildProductSearchArr(tempArr1[i], tempArr2[i])
+
+    // Creates a single array for all product angles
+    allAnglesArr = topViewsArr.concat(angleViewArr, closeViewArr);
 }
 
-// Creates C Angle array
-let closeViewArr = [...productArray];
-for (var i = 0; i < closeViewArr.length; i++) {
-    closeViewArr[i] = closeViewArr[i] + '_C.jpg';
-}
-
-// Creates all Angles array
-let allAnglesArr = topViewsArr.concat(angleViewArr, closeViewArr);
+console.log(allAnglesArr);
+// // Creates all Angles array
 
 let requestedBy, originalPath, fileName, username,
     found = 0,
@@ -139,11 +142,11 @@ inquirer
                                     .then(list => {
                                         if (list.choice == 'A angles only') {
                                             beginSearch(topViewsArr)
-                                        } else if (list.choice == 'B angles only'){
+                                        } else if (list.choice == 'B angles only') {
                                             beginSearch(angleViewArr)
-                                        } else if (list.choice == 'C angles only'){
+                                        } else if (list.choice == 'C angles only') {
                                             beginSearch(closeViewArr)
-                                        } else if (list.choice == 'All of the above'){
+                                        } else if (list.choice == 'All of the above') {
                                             beginSearch(allAnglesArr)
                                         } else {
                                             console.log("\nThat's okay " + username + ", come again when you are more sure.\n")
@@ -208,7 +211,7 @@ function shareFolder(requestedBy) {
 
 // Calls search function 
 function beginSearch(searchArray) {
-    
+
     // Displays premature results if application is ended early via 'ctrl + c' or 'ctrl + z'
     process.on('SIGINT', function () {
         console.log("\n\n\nUh-oh! You have ended the process before completion.");
