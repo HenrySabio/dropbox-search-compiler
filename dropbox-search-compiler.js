@@ -36,9 +36,6 @@ for (let i = 0; i <= 2; i++) {
     allAnglesArr = topViewsArr.concat(angleViewArr, closeViewArr);
 }
 
-console.log(allAnglesArr);
-// // Creates all Angles array
-
 let requestedBy, originalPath, fileName, username,
     found = 0,
     notFound = 0;
