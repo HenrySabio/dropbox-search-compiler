@@ -34,9 +34,7 @@ for (var i = 0; i < closeViewArr.length; i++) {
 }
 
 // Creates all Angles array
-let allAnglesArr = topViewsArr.concat(topViewsArr, angleViewArr, closeViewArr);
-console.log(allAnglesArr);
-
+let allAnglesArr = topViewsArr.concat(angleViewArr, closeViewArr);
 
 let requestedBy, originalPath, fileName, username,
     found = 0,
@@ -121,9 +119,40 @@ inquirer
                             }
                         ])
                         // If the inquirerResponse confirms as correct, beginSearch function is called.
-                        .then(inquirerResponse => { inquirerResponse.confirm ? beginSearch() : console.log("\nThat's okay " + username + ", come again when you are more sure.\n") })
-                } else {
-                    console.log("\nOops! Please restart the application to try again.\n");
+                        .then(inquirerResponse => {
+                            if (inquirerResponse.confirm) {
+                                inquirer
+                                    .prompt([
+                                        {
+                                            type: "list",
+                                            message: `What images are you searching for?`,
+                                            name: "choice",
+                                            choices: [
+                                                'A angles only',
+                                                'B angles only',
+                                                'C angles only',
+                                                'All of the above'
+                                            ],
+                                        }
+                                    ])
+                                    // If the inquirerResponse confirms as correct, beginSearch function is called.
+                                    .then(list => {
+                                        if (list.choice == 'A angles only') {
+                                            beginSearch(topViewsArr)
+                                        } else if (list.choice == 'B angles only'){
+                                            beginSearch(angleViewArr)
+                                        } else if (list.choice == 'C angles only'){
+                                            beginSearch(closeViewArr)
+                                        } else if (list.choice == 'All of the above'){
+                                            beginSearch(allAnglesArr)
+                                        } else {
+                                            console.log("\nThat's okay " + username + ", come again when you are more sure.\n")
+                                        }
+                                    });
+                            } else {
+                                console.log("\nOops! Please restart the application to try again.\n");
+                            }
+                        })
                 }
             })
     })
@@ -160,7 +189,7 @@ function dropboxSearch(searchQuery, requestedWho) {
 
 // Takes query result data and creates a copy in folder named after user who requested files under the current data
 function copyFile() {
-    dbx.filesCopyBatchV2({ entries: copyBatch, autorename: false })
+    dbx.filesCopyBatchV2({ entries: copyBatch, autorename: true })
         .catch(function (err) {
             console.log(err);
         })
@@ -178,8 +207,8 @@ function shareFolder(requestedBy) {
 }
 
 // Calls search function 
-function beginSearch() {
-
+function beginSearch(searchArray) {
+    
     // Displays premature results if application is ended early via 'ctrl + c' or 'ctrl + z'
     process.on('SIGINT', function () {
         console.log("\n\n\nUh-oh! You have ended the process before completion.");
@@ -212,30 +241,29 @@ function beginSearch() {
     let barValue = 1;
 
     // Set bar length to amount of items we are searching for, start point to 0
-    bar1.start(productArray.length, 0, {
+    bar1.start(searchArray.length, 0, {
         speed: 'N/A'
     });
 
     // Loops through product array to search for each item and copy as they are found
-    for (let i = 0; i <= productArray.length; i++) {
+    for (let i = 0; i <= searchArray.length; i++) {
         // setTimeout triggered as an Immdiately Invoked Function Expression (IIFE)
         // Must be done as IIFE because setTimeout is nonblocking and returns immidiately - no delay seen inside for loop if done normally
         (function (i) {
             setTimeout(function () {
                 bar1.increment();
-                if (i == (productArray.length)) {
+                if (i == (searchArray.length)) {
                     bar1.update(barValue++);
                     bar1.stop();
                     console.log('\n-------------------------------------------------------\n');
                     console.log('\nMission Complete! --> Please check the log files in the results folder for final confirmation.\n');
                     console.log(`Final Results:\n${found} files found\n${notFound} files not found`);
-
                     copyFile();
                     // copyFile(originalPath, requestedBy, fileName);
                     // Updates count for total files found
-                } else if (i < productArray.length) {
+                } else if (i < searchArray.length) {
                     bar1.update(barValue++);
-                    dropboxSearch(productArray[i], username);
+                    dropboxSearch(searchArray[i], username);
                 }
             }, 500 * i);
         })(i);
