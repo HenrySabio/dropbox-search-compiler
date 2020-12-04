@@ -17,7 +17,7 @@ let productArray = fs.readFileSync('data/search.txt').toString().split('\n');
 
 // Initializes Base Arrays to build on
 let topViewsArr = [...productArray], angleViewArr = [...productArray], closeViewArr = [...productArray],
-    allAnglesArr = []
+    allAnglesArr = [], roomSceneArr = [];
 
 // Will build arrays off existing base arrays for individual angle searchs
 function buildProductSearchArr(arrName, prefix) {
@@ -34,6 +34,13 @@ for (let i = 0; i <= 2; i++) {
 
     // Creates a single array for all product angles
     allAnglesArr = topViewsArr.concat(angleViewArr, closeViewArr);
+}
+
+// Builds room scene array
+for (let i = 1; i < 8; i++) {
+    let tempArr = [...productArray]
+    tempArr.forEach( (element, x) => { tempArr[x] += `_0${i}.jpg` });
+    roomSceneArr = roomSceneArr.concat(tempArr);
 }
 
 let requestedBy, originalPath, fileName, username,
