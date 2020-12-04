@@ -86,6 +86,8 @@ function logResult(logName, searchQuery) {
 
 /* ----- BEGIN: CLI Prompt - Application Run ----- */
 
+// TODO: Added prompt option for room scenes
+
 // Create a "Prompt" with a series of questions.
 console.log('============================================================\n')
 console.log('     Welcome to the Dropbox Asset Search & File Compiler\n')
