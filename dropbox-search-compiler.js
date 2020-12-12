@@ -16,7 +16,7 @@ let copyBatch = [];
 let productArray = fs.readFileSync('data/search.txt').toString().split('\n');
 
 // Initializes Base Arrays to build on
-let topViewsArr = [...productArray], angleViewArr = [...productArray], closeViewArr = [...productArray],
+let topViewsArr = [...productArray], angleViewArr = [...productArray], closeViewArr = [...productArray], extraViewArr = [...productArray],
     allAnglesArr = [], roomSceneArr = [];
 
 // Will build arrays off existing base arrays for individual angle searchs
@@ -27,19 +27,19 @@ function buildProductSearchArr(arrName, prefix) {
 }
 
 // Builds all product angle arrays at once
-for (let i = 0; i <= 2; i++) {
-    let tempArr1 = [topViewsArr, angleViewArr, closeViewArr]
-    let tempArr2 = ['_A.jpg', '_B.jpg', '_C.jpg']
+for (let i = 0; i <= 3; i++) {
+    let tempArr1 = [topViewsArr, angleViewArr, closeViewArr, extraViewArr]
+    let tempArr2 = ['_A.jpg', '_B.jpg', '_C.jpg', '_D.jpg']
     buildProductSearchArr(tempArr1[i], tempArr2[i])
 
     // Creates a single array for all product angles
-    allAnglesArr = topViewsArr.concat(angleViewArr, closeViewArr);
+    allAnglesArr = topViewsArr.concat(angleViewArr, closeViewArr, extraViewArr);
 }
 
 // Builds room scene array
 for (let i = 1; i < 8; i++) {
     let tempArr = [...productArray]
-    tempArr.forEach( (element, x) => { tempArr[x] += `_0${i}.jpg` });
+    tempArr.forEach((element, x) => { tempArr[x] += `_0${i}.jpg` });
     roomSceneArr = roomSceneArr.concat(tempArr);
 }
 
@@ -85,8 +85,6 @@ function logResult(logName, searchQuery) {
 /* ******************************************************************************************************* */
 
 /* ----- BEGIN: CLI Prompt - Application Run ----- */
-
-// TODO: Added prompt option for room scenes
 
 // Create a "Prompt" with a series of questions.
 console.log('============================================================\n')
@@ -140,7 +138,8 @@ inquirer
                                                 'A angles only',
                                                 'B angles only',
                                                 'C angles only',
-                                                'All of the above'
+                                                'All of the above',
+                                                'Room Scenes',
                                             ],
                                         }
                                     ])
@@ -154,6 +153,8 @@ inquirer
                                             beginSearch(closeViewArr)
                                         } else if (list.choice == 'All of the above') {
                                             beginSearch(allAnglesArr)
+                                        } else if (list.choice == 'Room Scenes') {
+                                            beginSearch(roomSceneArr)
                                         } else {
                                             console.log("\nThat's okay " + username + ", come again when you are more sure.\n")
                                         }
@@ -177,7 +178,7 @@ function dropboxSearch(searchQuery, requestedWho) {
     requestedBy = requestedWho;
 
     // Search begins at path defined, takes the first search result 
-    dbx.filesSearch({ path: '', mode: 'filename', max_results: 4, query: searchQuery })
+    dbx.filesSearch({ path: '/Brochures/image library', mode: 'filename', max_results: 4, query: searchQuery })
         // If result is found - copyFile function is called 
         .then(function (res) {
             originalPath = res.matches[0].metadata.path_lower;
@@ -200,7 +201,11 @@ function dropboxSearch(searchQuery, requestedWho) {
 function copyFile() {
     dbx.filesCopyBatchV2({ entries: copyBatch, autorename: true })
         .catch(function (err) {
-            console.log(err);
+            if (entries == []) {
+                console.log('Sorry, no files found.');
+            } else {
+                console.log(err);
+            }
         })
 }
 
