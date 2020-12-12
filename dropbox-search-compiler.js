@@ -8,7 +8,8 @@ const Dropbox = require('dropbox').Dropbox;
 const dbx = new Dropbox({ accessToken: process.env.API_KEY, fetch });
 
 // Assigns current date to variable - formatted yyyy-mm-dd
-const date = new Date().toISOString().slice(0, 10);
+const d = new Date();
+const date = d.toLocaleDateString().split('/').reverse().join('-');
 
 // Loads file system modile, converts text file data to an array
 const fs = require('fs');
@@ -186,7 +187,7 @@ function dropboxSearch(searchQuery, requestedWho) {
 
             // Takes first result and appends source & destinaiton paths to array.
             copyBatch.push({ from_path: originalPath, to_path: `/requested-files/${requestedBy}/${date}/${fileName}` })
-            found++;
+            found = copyBatch.length;
         })
         // If product is not found - conosle logs the item that is missing
         .catch(function (error) {
@@ -252,7 +253,7 @@ function beginSearch(searchArray) {
 
     // Creates a new progress bar instance
     const bar1 = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-    let barValue = 1;
+    let barValue = 0;
 
     // Set bar length to amount of items we are searching for, start point to 0
     bar1.start(searchArray.length, 0, {
@@ -260,14 +261,16 @@ function beginSearch(searchArray) {
     });
 
     // Loops through product array to search for each item and copy as they are found
-    for (let i = 0; i <= searchArray.length; i++) {
+    for (let i = 0; i <= (searchArray.length + 1); i++) {
         // setTimeout triggered as an Immdiately Invoked Function Expression (IIFE)
         // Must be done as IIFE because setTimeout is nonblocking and returns immidiately - no delay seen inside for loop if done normally
-        (function (i) {
+        (function (x) {
             setTimeout(function () {
                 bar1.increment();
-                if (i == (searchArray.length)) {
+                if (i <= searchArray.length) {
+                    dropboxSearch(searchArray[i], username);
                     bar1.update(barValue++);
+                } else {
                     bar1.stop();
                     console.log('\n-------------------------------------------------------\n');
                     console.log('\nMission Complete! --> Please check the log files in the results folder for final confirmation.\n');
@@ -275,11 +278,8 @@ function beginSearch(searchArray) {
                     copyFile();
                     // copyFile(originalPath, requestedBy, fileName);
                     // Updates count for total files found
-                } else if (i < searchArray.length) {
-                    bar1.update(barValue++);
-                    dropboxSearch(searchArray[i], username);
                 }
-            }, 500 * i);
+            }, 250 * i);
         })(i);
     };
 }
