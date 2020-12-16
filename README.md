@@ -19,6 +19,10 @@ This is slowly changing as I learn to improve and streamline it - feel free to b
 * Choose file extensions
   * Need to be able to choose between .jpg, .pdf, psd
 
+* Create new folder per request
+  * Currently puts all searchs for a specific person under the current date
+  * Can cause conflicts if more than one search for a single person on the same day without manual cleanup
+
 ## Installation
 
 Installation is simple.
