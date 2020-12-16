@@ -16,8 +16,7 @@ This is slowly changing as I learn to improve and streamline it - feel free to b
 
 ## Planned features
 
-* Choose file format being searched for
-  * Currently only searches for .jpgs named using the following naming convention: 'FILENAME_A.jpg'
+* Choose file extensions being search for
 
 ## Installation
 
