@@ -258,12 +258,9 @@ function beginSearch(searchArray) {
                 } else {
                     bar1.stop();
                     console.log('\n-------------------------------------------------------\n');
-                    console.log('\nMission Complete! --> Please check the log files in the results folder for final confirmation.\n');
+                    console.log('Mission Complete! --> Please check the log files in the results folder for final confirmation.\n');
                     console.log(`Final Results:\n${found} files found\n${notFound} files not found`);
                     copyFile();
-
-                    // copyFile(originalPath, requestedBy, fileName);
-                    // Updates count for total files found
                 }
             }, 500 * i);
         })(i);
