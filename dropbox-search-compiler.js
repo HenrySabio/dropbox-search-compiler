@@ -175,18 +175,18 @@ inquirer
 /* ----- BEGIN: Dropbox API Operations - Handles operations during application run ----- */
 
 // Takes product array and name of person requesting to begin api calls for search
-function dropboxSearch(searchQuery, requestedWho) {
+async function dropboxSearch(searchQuery, requestedWho) {
     requestedBy = requestedWho;
 
     // Search begins at path defined, takes the first search result 
-    dbx.filesSearch({ path: '/Brochures/image library', mode: 'filename', max_results: 4, query: searchQuery })
+    await dbx.filesSearch({ path: '/Brochures/image library', mode: 'filename', max_results: 4, query: searchQuery })
         // If result is found - copyFile function is called 
-        .then(function (res) {
+        .then(async function (res) {
             originalPath = res.matches[0].metadata.path_lower;
             fileName = res.matches[0].metadata.name;
 
             // Takes first result and appends source & destinaiton paths to array.
-            copyBatch.push({ from_path: originalPath, to_path: `/requested-files/${requestedBy}/${date}/${fileName}` })
+            await copyBatch.push({ from_path: originalPath, to_path: `/requested-files/${requestedBy}/${date}/${fileName}` })
             found = copyBatch.length;
         })
         // If product is not found - conosle logs the item that is missing
@@ -261,13 +261,13 @@ function beginSearch(searchArray) {
     });
 
     // Loops through product array to search for each item and copy as they are found
-    for (let i = 0; i <= (searchArray.length + 1); i++) {
+    for (let i = 0; i <= searchArray.length; i++) {
         // setTimeout triggered as an Immdiately Invoked Function Expression (IIFE)
         // Must be done as IIFE because setTimeout is nonblocking and returns immidiately - no delay seen inside for loop if done normally
-        (function (x) {
-            setTimeout(function () {
-                bar1.increment();
-                if (i <= searchArray.length) {
+        bar1.increment();
+        (async function (i) {
+            setTimeout(await function () {
+                if (i < searchArray.length) {
                     dropboxSearch(searchArray[i], username);
                     bar1.update(barValue++);
                 } else {
@@ -276,10 +276,11 @@ function beginSearch(searchArray) {
                     console.log('\nMission Complete! --> Please check the log files in the results folder for final confirmation.\n');
                     console.log(`Final Results:\n${found} files found\n${notFound} files not found`);
                     copyFile();
+
                     // copyFile(originalPath, requestedBy, fileName);
                     // Updates count for total files found
                 }
-            }, 250 * i);
+            }, 500 * i);
         })(i);
     };
 }
