@@ -16,7 +16,8 @@ This is slowly changing as I learn to improve and streamline it - feel free to b
 
 ## Planned features
 
-* Choose file extensions being search for
+* Choose file extensions
+  * Need to be able to choose between .jpg, .pdf, psd
 
 ## Installation
 
