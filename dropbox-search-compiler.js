@@ -173,6 +173,8 @@ async function dropboxSearch(searchQuery, requestedWho) {
             // Takes first result and appends source & destinaiton paths to array.
             await copyBatch.push({ from_path: originalPath, to_path: `/requested-files/${requestedBy}/${date}/${fileName}` })
             found = copyBatch.length;
+            // Logs name of files that have been found to found_files.txt
+            logResult('found_files', searchQuery);
         })
         // If product is not found - conosle logs the item that is missing
         .catch(function (error) {
@@ -238,7 +240,7 @@ function beginSearch(searchArray) {
 
     // Creates a new progress bar instance
     const bar1 = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-    let barValue = 0;
+    let barValue = 1;
 
     // Set bar length to amount of items we are searching for, start point to 0
     bar1.start(searchArray.length, 0, {
@@ -249,11 +251,11 @@ function beginSearch(searchArray) {
     for (let i = 0; i <= searchArray.length; i++) {
         // setTimeout triggered as an Immdiately Invoked Function Expression (IIFE)
         // Must be done as IIFE because setTimeout is nonblocking and returns immidiately - no delay seen inside for loop if done normally
-        bar1.increment();
         (async function (i) {
             setTimeout(await function () {
-                if (i < searchArray.length) {
+                if (barValue <= searchArray.length) {
                     dropboxSearch(searchArray[i], username);
+                    bar1.increment();
                     bar1.update(barValue++);
                 } else {
                     bar1.stop();
